@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "brands", "designer"],
+    enum: ["admin", "brand", "designer"],
     default: "brands",
   },
   verificationToken: String,
@@ -49,6 +49,7 @@ const UserSchema = new mongoose.Schema({
     required: function () {
       return this.isSignUpCompleted === true;
     },
+    unique: true,
   },
 });
 

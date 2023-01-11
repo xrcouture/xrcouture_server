@@ -2,7 +2,9 @@ const CustomError = require("../errors");
 const { isTokenValid } = require("../utils");
 const Token = require("../models/Token");
 const { attachCookiesToResponse } = require("../utils");
+const logger = require("../utils/logger");
 
+// **********************************authenticateUser Middleware**********************************
 const authenticateUser = async (req, res, next) => {
   const { refreshToken, accessToken } = req.signedCookies;
 
@@ -19,7 +21,8 @@ const authenticateUser = async (req, res, next) => {
       refreshToken: payload.refreshToken,
     });
 
-    if (!existingToken || !existingToken?.isValid) {
+    if (!existingToken) {
+      logger.error(`No Token exists during authenticate User middleware`);
       throw new CustomError.UnauthenticatedError("Authentication Invalid");
     }
 
@@ -28,17 +31,23 @@ const authenticateUser = async (req, res, next) => {
       user: payload.user,
       refreshToken: existingToken.refreshToken,
     });
+    logger.info(`Access Tokens and Rehresh tokens are attached to cookies during authenticate User middleware`);
 
     req.user = payload.user;
     next();
   } catch (error) {
+    logger.error(
+      `Authentication Invalid during authenticate User authenticate User middleware`
+    );
     throw new CustomError.UnauthenticatedError("Authentication Invalid");
   }
 };
 
+// **********************************authorizePermissions Middleware**********************************
 const authorizePermissions = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
+      logger.error(`The user: ${req.user.email} with role ${req.user.role} is not authorized`);
       throw new CustomError.UnauthorizedError(
         "Unauthorized to access this route"
       );

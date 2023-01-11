@@ -15,7 +15,7 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
   res.cookie("accessToken", accessTokenJWT, {
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
+    secure: process.env.NODE_ENV == "production",
     signed: true,
     expires: new Date(Date.now() + constants.ONE_HOUR),
   });
@@ -23,7 +23,7 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
   res.cookie("refreshToken", refreshTokenJWT, {
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
+    secure: process.env.NODE_ENV == "production",
     signed: true,
     expires: new Date(Date.now() + constants.THIRTY_DAYS),
   });

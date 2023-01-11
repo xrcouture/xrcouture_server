@@ -1,4 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
+const logger = require("../utils/logger");
+
 const errorHandlerMiddleware = (err, req, res, next) => {
   let customError = {
     // set default
@@ -12,6 +14,9 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.statusCode = 400;
   }
 
+  logger.error(
+    `Custom Error occured with statuscode: ${customError.statusCode} and error message: ${customError.msg} while accessing: ${req.url} with ${req.method} method`
+  );
   return res.status(customError.statusCode).json({ msg: customError.msg });
 };
 

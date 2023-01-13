@@ -5,6 +5,6 @@ const upload2dAssets = require("../controllers/brandController")
 const router = express.Router();
 
 
-router.post("/upload", uploadToS3.any('file'), upload2dAssets);
+router.post("/upload", uploadToS3('2dAssets').any('file'), upload2dAssets);
 
 module.exports = router;

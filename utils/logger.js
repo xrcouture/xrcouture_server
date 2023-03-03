@@ -4,13 +4,13 @@ const DailyRotateFile = require("winston-daily-rotate-file");
 // Add log file rotation
 const transport = new DailyRotateFile({
   filename: "./Logs/application-%DATE%.log",
-  datePattern: "YYYY-MM-DD-HH-mm-ss",
+  datePattern: "YYYY-MM-DD",
   zippedArchive: true,
   maxSize: "1m",
-  maxFiles: 10,
+  maxFiles: "20",
   prepend: true,
   level: process.env.LOGGING_LEVEL,
-  auditFile: `./Logs/xrcie.${process.env.LOGGING_LEVEL}-audit.json`,
+  //auditFile: `./Logs/xrcie.${process.env.LOGGING_LEVEL}-audit.json`,
 });
 
 // Create logger
@@ -30,6 +30,7 @@ const logger = winston.createLogger({
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
 if (process.env.NODE_ENV != "production") {
+  logger.remove(transport);
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(

@@ -40,6 +40,7 @@ const UserSchema = new mongoose.Schema({
   },
   brandName: {
     type: String,
+    unique: true,
   },
   website: {
     type: String,

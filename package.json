@@ -4,8 +4,11 @@
   "description": "XRCIE backend",
   "main": "app.js",
   "scripts": {
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "stop": "pm2 delete all",
+    "logs": "pm2 logs"
   },
   "author": "XRCIE",
   "license": "ISC",
@@ -26,6 +29,7 @@
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^3.0.1",
     "nodemailer": "^6.8.0",
+    "pm2": "^5.2.2",
     "validator": "^13.7.0",
     "vhost": "^3.0.2",
     "winston": "^3.8.2",

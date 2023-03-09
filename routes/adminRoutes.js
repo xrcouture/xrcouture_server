@@ -5,6 +5,7 @@ const {
   uploadDigitalWearables,
   sendFeedBack,
   readNotifications,
+  getAllAssets,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.post(
 );
 router.post("/sendfeedback", sendFeedBack);
 router.post("/readnotifications", readNotifications);
+router.get("/getAssets", getAllAssets);
 
 module.exports = router;

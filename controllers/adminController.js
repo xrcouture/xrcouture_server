@@ -14,8 +14,8 @@ const updateAsset = async (req, res) => {
     {
       assetName: name,
       brandName: brand,
-      estimatedPrice: budget,
-      estimatedTime: time,
+      actualPrice: budget,
+      actualTime: time,
       progress,
       status,
     },
@@ -293,9 +293,71 @@ const updateNotifications = async (brand, notificationMessage) => {
   return updatedNotifications;
 };
 
+const getAllAssets = async (req, res) => {
+  const assets = await Asset.aggregate([
+    {
+      $group: {
+        _id: "$brandName",
+        count: { $sum: 1 },
+        status: { $push: "$status" },
+      },
+    },
+    { $unwind: "$status" },
+    {
+      $group: {
+        _id: { brandName: "$_id", status: "$status" },
+        scount: { $sum: 1 },
+        count: { $first: "$count" },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.brandName",
+        total: { $first: "$count" },
+        status: { $push: { type: "$_id.status", count: "$scount" } },
+      },
+    },
+    {
+      $sort: {
+        total: -1,
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        brand: "$_id",
+        totalCount: "$total",
+        status: "$status.type",
+        counter: "$status.count",
+      },
+    },
+  ]);
+
+  const newAsset = assets.map((data) => {
+    data.status.map((r, j) => {
+      data[r] = data.counter[j];
+    });
+    delete data.status;
+    delete data.counter;
+    return data;
+  });
+
+  if (assets) {
+    logger.info(`All the assets have been retrieved by admin`);
+    res.status(StatusCodes.OK).json({
+      assets: newAsset,
+      msg: "All the assets have been retrieved by admin",
+    });
+  } else {
+    logger.error(`No assets have been fetched from DB by admin`);
+    throw new CustomError.BadRequestError("No Assets retrieved");
+  }
+};
+
 module.exports = {
   updateAsset,
   uploadDigitalWearables,
   sendFeedBack,
   readNotifications,
+  getAllAssets,
 };

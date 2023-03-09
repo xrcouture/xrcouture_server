@@ -30,6 +30,7 @@ var vhost = require("vhost");
 const authRouter = require("./routes/authRoutes");
 const brandRouter = require("./routes/brandRoutes");
 const adminRouter = require("./routes/adminRoutes");
+const paymentRouter = require("./routes/payment")
 
 // middlewares
 const notFoundMiddleware = require("./middleware/notFound");
@@ -52,6 +53,7 @@ app.use("/auth", authRouter);
 //app.use(vhost(`*.${process.env.DOMAIN_NAME}`, brandRouter));
 app.use("/admin", adminRouter);
 app.use("/brands", brandRouter);
+app.use("/payments", paymentRouter);
 
 // middleware for error handling
 app.use(notFoundMiddleware);

@@ -8,7 +8,8 @@
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "stop": "pm2 delete all",
-    "logs": "pm2 logs"
+    "logs": "pm2 logs",
+    "devStart": "node app.js"
   },
   "author": "XRCIE",
   "license": "ISC",
@@ -30,6 +31,7 @@
     "multer-s3": "^3.0.1",
     "nodemailer": "^6.8.0",
     "pm2": "^5.2.2",
+    "stripe": "^11.13.0",
     "validator": "^13.7.0",
     "vhost": "^3.0.2",
     "winston": "^3.8.2",

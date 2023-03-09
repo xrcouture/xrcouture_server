@@ -22,10 +22,10 @@ const AssetSchema = new mongoose.Schema(
     platform: {
       type: [String],
     },
-    estimatedPrice: {
+    actualPrice: {
       type: Number,
     },
-    estimatedTime: {
+    actualTime: {
       type: Number,
     },
     approximatePrice: {

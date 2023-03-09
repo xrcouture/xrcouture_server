@@ -10,22 +10,29 @@ const AssetSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide brand name"],
     },
+    description: {
+      type: String,
+    },
     brandAssetFiles: {
       type: [String],
-      required: [true, "Please provide brand asset files"],
     },
     thumbnail: {
       type: [String],
     },
     platform: {
       type: [String],
-      required: [true, "Please provide platform"],
     },
-    budget: {
+    estimatedPrice: {
       type: Number,
     },
     estimatedTime: {
-      type: String,
+      type: Number,
+    },
+    approximatePrice: {
+      type: Number,
+    },
+    approximateTime: {
+      type: Number,
     },
     progress: {
       type: Number,
@@ -36,25 +43,21 @@ const AssetSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Under Review", "Pending payment", "Paid"],
+      enum: [
+        "Draft",
+        "Under Review",
+        "Action Required",
+        "Pending payment",
+        "In Progress",
+        "Completed",
+      ],
       default: "Under Review",
     },
-    feedback: [
-      {
-        sender: {
-          type: String,
-        },
-        receiver: {
-          type: String,
-        },
-        timestamp: {
-          type: Date,
-        },
-        message: {
-          type: String,
-        },
-      },
-    ],
+    draftPage: {
+      type: Number,
+      max: 3,
+    },
+    feedback: { type: Array, default: [] },
     digitalWearables: {
       decentraland: {
         type: String,

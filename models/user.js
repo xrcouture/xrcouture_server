@@ -45,13 +45,6 @@ const UserSchema = new mongoose.Schema({
   website: {
     type: String,
   },
-  subdomain: {
-    type: String,
-    required: function () {
-      return this.isSignUpCompleted === true;
-    },
-    unique: true,
-  },
 });
 
 UserSchema.pre("save", async function () {

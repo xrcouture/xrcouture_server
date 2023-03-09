@@ -1,18 +1,21 @@
 const express = require("express");
 const { uploadToS3 } = require("../utils");
 const {
-  uploadBrandAssets,
+  createBrandAssets,
   retrieveAssets,
   assetName,
   updateAsset,
   retrieveAsset,
   deleteAssets,
+  saveASDraft,
+  sendFeedBack,
+  readNotifications
 } = require("../controllers/brandController");
 
 const router = express.Router();
 
 router.post(
-  "/upload",
+  "/create",
   uploadToS3("XRCIE/brandAssets").fields([
     {
       name: "assets",
@@ -23,7 +26,21 @@ router.post(
       maxCount: 1,
     },
   ]),
-  uploadBrandAssets
+  createBrandAssets
+);
+router.post(
+  "/saveasdraft",
+  uploadToS3("XRCIE/brandAssets").fields([
+    {
+      name: "assets",
+      maxCount: 10,
+    },
+    {
+      name: "thumbnail",
+      maxCount: 1,
+    },
+  ]),
+  saveASDraft
 );
 router.post(
   "/update",
@@ -44,5 +61,7 @@ router.post("/assets", retrieveAssets);
 router.post("/asset", retrieveAsset);
 router.post("/assetNames", assetName);
 router.delete("/delete", deleteAssets);
+router.post("/sendfeedback", sendFeedBack);
+router.post("/readnotifications", readNotifications);
 
 module.exports = router;

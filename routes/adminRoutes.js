@@ -3,6 +3,8 @@ const { uploadToS3 } = require("../utils");
 const {
   updateAsset,
   uploadDigitalWearables,
+  sendFeedBack,
+  readNotifications,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -18,5 +20,7 @@ router.post(
   ]),
   uploadDigitalWearables
 );
+router.post("/sendfeedback", sendFeedBack);
+router.post("/readnotifications", readNotifications);
 
 module.exports = router;

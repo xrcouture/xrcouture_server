@@ -1,0 +1,44 @@
+{
+  "name": "xrcie",
+  "version": "1.0.0",
+  "description": "XRCIE backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "pm2 start app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "stop": "pm2 delete all",
+    "logs": "pm2 logs",
+    "devStart": "node app.js"
+  },
+  "author": "XRCIE",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.245.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "helmet": "^6.0.1",
+    "http-status-codes": "^2.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.8.2",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
+    "nodemailer": "^6.8.0",
+    "pm2": "^5.2.2",
+    "stripe": "^11.13.0",
+    "validator": "^13.7.0",
+    "vhost": "^3.0.2",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1",
+    "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

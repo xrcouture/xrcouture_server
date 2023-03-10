@@ -26,7 +26,7 @@ const signUp = async (req, res) => {
     throw new CustomError.BadRequestError("Email already exists");
   }
 
-  const role = "brand";
+  const role = "brands";
   const isSignUpCompleted = false;
 
   const verificationToken = crypto.randomBytes(40).toString("hex");

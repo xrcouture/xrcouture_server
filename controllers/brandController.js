@@ -188,6 +188,7 @@ const updateAsset = async (req, res) => {
 const retrieveAsset = async (req, res, next) => {
   const brandName = req.body.brand;
   const assetName = req.body.name;
+
   const Assets = await Asset.find({
     brandName,
     assetName,

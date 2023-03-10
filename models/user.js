@@ -19,8 +19,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "brand", "designer"],
-    default: "brands",
+    enum: ["admin", "brand"],
+    default: "brand",
   },
   verificationToken: String,
   isVerified: {
@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema({
   brandName: {
     type: String,
     unique: true,
+    sparse:true
   },
   website: {
     type: String,

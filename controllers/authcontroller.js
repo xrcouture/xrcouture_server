@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const crypto = require("crypto");
 const constants = require("../utils/constants");
-const logger = require("../utils/logger")
+const logger = require("../utils/logger");
 
 const {
   attachCookiesToResponse,
@@ -17,18 +17,17 @@ const {
 // **********************************signUp Controller**********************************
 const signUp = async (req, res) => {
   const { email, password } = req.body;
-  let role = req.body.role;
 
   const emailAlreadyExists = await User.findOne({ email });
   if (emailAlreadyExists) {
-    logger.error(`Email Id: ${email} already exists in the DB during signup process`);
+    logger.error(
+      `Email Id: ${email} already exists in the DB during signup process`
+    );
     throw new CustomError.BadRequestError("Email already exists");
   }
 
-  role = role == undefined ? "brand" : role;
-
-  const isSignUpCompleted = role == "designer" ? true : false;
-  logger.info(`The user with role: ${role} is signing up`);
+  const role = "brand";
+  const isSignUpCompleted = false;
 
   const verificationToken = crypto.randomBytes(40).toString("hex");
 
@@ -40,7 +39,7 @@ const signUp = async (req, res) => {
     isSignUpCompleted,
   });
 
-  const origin = process.env.ORIGIN;
+  const origin = process.env.CURRENT_ORIGIN;
 
   await sendVerificationEmail({
     email: user.email,
@@ -129,7 +128,7 @@ const verifyEmail = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Verification Failed");
   }
 
-  if (user.isVerified == true) {
+  if (user.isVerified) {
     logger.error(
       `The email verification is failed for the user: ${email}. The mail Id is already verified`
     );
@@ -143,19 +142,26 @@ const verifyEmail = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Verification Failed");
   }
 
-  (user.isVerified = true), (user.verified = Date.now());
-  user.verificationToken = "";
+  const updatedUser = await User.findOneAndUpdate(
+    { email },
+    {
+      isVerified: true,
+      verified: Date.now(),
+      verificationToken: "",
+    },
+    { new: true }
+  );
 
-  await user.save();
-
-  res.status(StatusCodes.OK).json({ msg: "Email Verified" });
   logger.info(`The email is verified for the user: ${user.email}`);
+  res.status(StatusCodes.OK).json({ msg: "Email Verified" });
 };
 
 // **********************************signOut Controller**********************************
 const signOut = async (req, res) => {
   try {
-    const deletedToken = await Token.findOneAndDelete({ user: req.user.userId });
+    const deletedToken = await Token.findOneAndDelete({
+      user: req.user.userId,
+    });
     if (!deletedToken) {
       logger.error(
         `The token doesn't exists for the user with mail id : ${req.user.email} during signOut`
@@ -264,48 +270,43 @@ const resetPassword = async (req, res) => {
 
 // **********************************setBrandProfile Controller**********************************
 const setBrandProfile = async (req, res) => {
-  const { brandName, website, subdomain } = req.body;
+  const { brandName, website } = req.body;
   const email = req.user.email;
 
-  if (!subdomain) {
-    logger.error(`Subdomain is empty during setBrandProfile`);
-    throw new CustomError.BadRequestError("Please provide valid subdomain");
+  if (!brandName) {
+    logger.error(`brandName is empty during setBrandProfile`);
+    throw new CustomError.BadRequestError("Please provide valid brandName");
   }
 
-  // check if the subdomain already exists
-  const domain = await User.findOne({ subdomain });
-  if (domain) {
+  // check if the brandName already exists
+  const name = await User.findOne({ brandName });
+  if (name) {
     logger.error(
-      `The Subdomain: ${subdomain} already exists during setBrandProfile`
+      `The BrandName: ${brandName} already exists during setBrandProfile`
     );
-    throw new CustomError.BadRequestError("Subdomain already exists");
+    throw new CustomError.BadRequestError("BrandName already exists");
   }
 
-  const updateData = {
-    brandName,
-    website,
-    subdomain,
-    isSignUpCompleted: true,
-  };
-  const user = await User.findOne({ email });
+  const user = await User.findOneAndUpdate(
+    { email },
+    {
+      brandName,
+      website,
+      isSignUpCompleted: true,
+    }
+  );
 
-  if (user) {
-    user.brandName = brandName;
-    user.website = website;
-    user.subdomain = subdomain;
-    user.isSignUpCompleted = true;
-    await user.save();
-  } else {
+  if (!user) {
     logger.error(
       `The user with mail id: ${email} doesn't exists during setBrandProfile`
     );
     throw new CustomError.UnauthenticatedError("Invalid User");
   }
 
-  res.status(StatusCodes.OK).json({ signUpCompleted: user.isSignUpCompleted });
   logger.info(
     `Brand profile information successfully stored for: ${user.email}`
   );
+  res.status(StatusCodes.OK).json({ signUpCompleted: user.isSignUpCompleted });
 };
 
 // module exports

@@ -47,7 +47,7 @@ router.post(
   uploadToS3("XRCIE/brandAssets").fields([
     {
       name: "assets",
-      maxCount: 1,
+      maxCount: 5,
     },
     {
       name: "thumbnail",

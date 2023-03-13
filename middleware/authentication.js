@@ -15,7 +15,6 @@ const authenticateUser = async (req, res, next) => {
       return next();
     }
     const payload = isTokenValid(refreshToken);
-
     const existingToken = await Token.findOne({
       user: payload.user.userId,
       refreshToken: payload.refreshToken,
@@ -37,7 +36,7 @@ const authenticateUser = async (req, res, next) => {
     next();
   } catch (error) {
     logger.error(
-      `Authentication Invalid during authenticate User authenticate User middleware`
+      `Authentication Invalid during authenticate user middleware`
     );
     throw new CustomError.UnauthenticatedError("Authentication Invalid");
   }

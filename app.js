@@ -30,10 +30,11 @@ var vhost = require("vhost");
 const authRouter = require("./routes/authRoutes");
 const brandRouter = require("./routes/brandRoutes");
 const adminRouter = require("./routes/adminRoutes");
-const paymentRouter = require("./routes/payment")
+const paymentRouter = require("./routes/payment");
 
 // middlewares
 const notFoundMiddleware = require("./middleware/notFound");
+const allowCookies = require("./middleware/allowCookies");
 
 // logging
 const logger = require("./utils/logger");
@@ -41,10 +42,17 @@ const logger = require("./utils/logger");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.JWT_SECRET));
+app.use(allowCookies);
 
 // middleware for security
 app.use(helmet());
-app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+app.use(
+  cors({
+    origin: process.env.ORIGIN,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(xss());
 app.use(mongoSanitize());
 

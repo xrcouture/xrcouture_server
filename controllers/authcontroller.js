@@ -96,7 +96,12 @@ const signIn = async (req, res) => {
 
     res
       .status(StatusCodes.OK)
-      .json({ signUpCompleted: user.isSignUpCompleted, role: user.role, mail: user.email, brand: user.brandName });
+      .json({
+        signUpCompleted: user.isSignUpCompleted,
+        role: user.role,
+        mail: user.email,
+        brand: user.brandName,
+      });
     logger.info(
       `The user: ${user.email} is signed in successfully. The signUpCompleted status is ${user.isSignUpCompleted}`
     );
@@ -111,7 +116,14 @@ const signIn = async (req, res) => {
   attachCookiesToResponse({ res, user: tokenUser, refreshToken });
   logger.info(`Token is created for user : ${email} and attached in cookies`);
 
-  res.status(StatusCodes.OK).json({ signUpCompleted: user.isSignUpCompleted, role: user.role, mail: user.email, brand: user.brandName });
+  res
+    .status(StatusCodes.OK)
+    .json({
+      signUpCompleted: user.isSignUpCompleted,
+      role: user.role,
+      mail: user.email,
+      brand: user.brandName,
+    });
   logger.info(
     `The user: ${user.email} is signed in successfully. The signUpCompleted status is ${user.isSignUpCompleted}`
   );
@@ -160,21 +172,19 @@ const verifyEmail = async (req, res) => {
 // **********************************signOut Controller**********************************
 const signOut = async (req, res) => {
   try {
-    const loggedInUser = await User.findOne({brandName: req.body.brandName})
     const deletedToken = await Token.findOneAndDelete({
-      user: loggedInUser._id,
+      user: req.user._id,
     });
-    console.log(loggedInUser)
-    console.log(req.body)
-  /*  if (!deletedToken) {
+
+    if (!deletedToken) {
       logger.error(
-        `The token doesn't exists for the user with mail id : ${loggedInUser.email} during signOut`
+        `The token doesn't exists for the user with mail id : ${req.user.email} during signOut`
       );
       throw new CustomError.UnauthenticatedError("Token does not exists");
-    }*/
+    }
   } catch (error) {
     logger.error(
-      `The user does not exists during signOut`
+      `The user with mail id : ${req.user.email} does not exists during signOut`
     );
     throw new CustomError.UnauthorizedError("Invalid User");
   }
@@ -187,7 +197,7 @@ const signOut = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now()),
   });
-  logger.info(`The user: ${loggedInUser.email} is logged out successfully`);
+  logger.info(`The user: ${req.user.email} is logged out successfully`);
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
@@ -274,9 +284,9 @@ const resetPassword = async (req, res) => {
 
 // **********************************setBrandProfile Controller**********************************
 const setBrandProfile = async (req, res) => {
-  const { brandName, website, email } = req.body;
-  console.log(req.body)
-  //const email = req.user.email;
+  const { brandName, website } = req.body;
+
+  const email = req.user.email;
 
   if (!brandName) {
     logger.error(`brandName is empty during setBrandProfile`);
@@ -314,9 +324,15 @@ const setBrandProfile = async (req, res) => {
   res.status(StatusCodes.OK).json({ signUpCompleted: user.isSignUpCompleted });
 };
 
-const setCookie = async (req, res) => {
-  res.cookie(`biscuits`,`milkbikkis`);
-  res.send('Cookie have been saved successfully');
+// **********************************setBrandProfile Controller**********************************
+const authorize = async (req, res) => {
+  if (req.body.email != req.user.email) {
+    logger.error(`Invalid user: ${req.user.email}. Please login`);
+    throw new CustomError.BadRequestError("Invalid user. Please login first");
+  }
+
+  logger.info(`User with mailId: ${req.user.email} is authorized`);
+  res.status(StatusCodes.OK).json({ msg: "Authorized user" });
 };
 
 // module exports
@@ -328,5 +344,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   setBrandProfile,
-  setCookie
+  authorize,
 };
